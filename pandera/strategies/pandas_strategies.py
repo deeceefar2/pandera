@@ -882,7 +882,7 @@ def series_strategy(
         return strategy.filter(_check_fn)
 
     for check in checks if checks is not None else []:
-        check_strategy = STRATEGY_DISPATCHER.get((check.name, pd.Series), None)
+        check_strategy = check.strategy or STRATEGY_DISPATCHER.get((check.name, pd.Series), None)
         if check_strategy is None and not check.element_wise:
             strategy = undefined_check_strategy(strategy, check)
 
@@ -1040,7 +1040,7 @@ def dataframe_strategy(
     def make_row_strategy(col, checks):
         strategy = None
         for check in checks:
-            check_strategy = STRATEGY_DISPATCHER.get(
+            check_strategy = check.strategy or STRATEGY_DISPATCHER.get(
                 (check.name, pd.DataFrame), None
             )
             if check_strategy is not None:
@@ -1065,7 +1065,7 @@ def dataframe_strategy(
         row_strategy_checks = []
         undefined_strat_df_checks = []
         for check in checks:
-            check_strategy = STRATEGY_DISPATCHER.get(
+            check_strategy = check.strategy or STRATEGY_DISPATCHER.get(
                 (check.name, pd.DataFrame)
             )
             if check_strategy is not None or check.element_wise:
@@ -1110,7 +1110,8 @@ def dataframe_strategy(
             undefined_strat_column_checks[col_name].extend(
                 check
                 for check in column.checks
-                if STRATEGY_DISPATCHER.get((check.name, pd.DataFrame)) is None
+                if check.strategy is None
+                and STRATEGY_DISPATCHER.get((check.name, pd.DataFrame)) is None
                 and not check.element_wise
             )
 
