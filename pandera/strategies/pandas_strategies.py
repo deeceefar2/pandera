@@ -804,7 +804,7 @@ def field_element_strategy(
         ).filter(check._check_fn)
 
     for check in checks:
-        check_strategy = STRATEGY_DISPATCHER.get((check.name, pd.Series), None)
+        check_strategy = check.strategy or STRATEGY_DISPATCHER.get((check.name, pd.Series), None)
         if check_strategy is not None:
             elements = check_strategy(
                 pandera_dtype, elements, **check.statistics
