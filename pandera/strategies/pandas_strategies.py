@@ -1236,7 +1236,7 @@ def multiindex_strategy(
         if dtype in {"object", "str"} or dtype.startswith("string"):
             # pylint: disable=cell-var-from-loop,undefined-loop-variable
             strategy = strategy.map(
-                lambda df: df.assign(**{name: df[name].map(str)})
+                lambda df: df.astype({name:str})
             )
 
     if any(nullable_index.values()):
