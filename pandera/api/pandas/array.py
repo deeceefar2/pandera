@@ -442,6 +442,18 @@ class SeriesSchema(ArraySchema):
         )
         return cast(pd.Series, validated_obj)
 
+    @st.strategy_import_error
+    def strategy(self, *, size=None):
+        """Create a hypothesis strategy from the schema.
+        
+        :param size: number of elements in the generated Series.
+        :returns: hypothesis strategy.
+        """
+        strategy = super().strategy(size=size)
+        if self.index is not None:
+            strategy = st.set_pandas_index(strategy, self.index)
+        return strategy
+
     def example(self, size=None) -> pd.Series:
         """Generate an example of a particular size.
 
